@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.min.js"></script>
+    <!-- PropellerAds Multi-Tag -->
+    <script src="https://ligheechoagool.com/88/tag.min.js" data-zone="146238" async data-cfasync="false"></script>
     <style>
         :root {
             --primary-color: #4285f4;
@@ -427,7 +429,6 @@
             <button class="btn" id="submit-login">Login</button>
             <div class="auth-switch">
                 <p>Don't have an account? <a id="switch-to-register">Register</a></p>
-材料
             </div>
         </div>
         
@@ -521,13 +522,13 @@
         // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD14wwgcUIyiPl_qXvx7CtQTO2DEy465II",
-  authDomain: "my-video-earn-app12.firebaseapp.com",
-  databaseURL: "https://my-video-earn-app12-default-rtdb.firebaseio.com",
-  projectId: "my-video-earn-app12",
-  storageBucket: "my-video-earn-app12.firebasestorage.app",
-  messagingSenderId: "967539655660",
-  appId: "1:967539655660:web:95e773e701d35a252936c9",
-  measurementId: "G-DPWBZT3RN5"
+            authDomain: "my-video-earn-app12.firebaseapp.com",
+            databaseURL: "https://my-video-earn-app12-default-rtdb.firebaseio.com",
+            projectId: "my-video-earn-app12",
+            storageBucket: "my-video-earn-app12.firebasestorage.app",
+            messagingSenderId: "967539655660",
+            appId: "1:967539655660:web:95e773e701d35a252936c9",
+            measurementId: "G-DPWBZT3RN5"
         };
         
         // Initialize Firebase
@@ -988,7 +989,7 @@
                                 document.querySelector('.points').textContent = `${updatedPoints} Points`;
                             })
                             .catch((error) => {
-                                console.error("Error updating points:", error);
+                            console.error("Error updating points:", error);
                             });
                     }
                 }).catch((error) => {
