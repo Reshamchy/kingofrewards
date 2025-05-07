@@ -2,877 +2,1016 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="monetag" content="aa22e9e3abc827a6d357d278da166373">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King of Rewards</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <meta name="monetag" content="aa22e9e3abc827a6d357d278da166373">
+    <title>AdRewards - Watch Ads & Earn Points</title>
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.min.js"></script>
     <style>
         :root {
-            --primary: #6a1b9a;
-            --primary-light: #9c4dcc;
-            --primary-dark: #38006b;
-            --accent: #ffc107;
-            --text-on-dark: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --bg-light: #f9f9f9;
-            --card-bg: #ffffff;
-            --card-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --accent-color: #ea4335;
+            --light-color: #f8f9fa;
+            --dark-color: #202124;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: var(--bg-light);
-            color: var(--text-primary);
-            line-height: 1.6;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            min-height: 100vh;
         }
-
+        
         .container {
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
-
-        /* Header styles */
+        
         header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--text-on-dark);
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
-        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
         }
-
+        
         .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
         }
-
-        .logo i {
-            font-size: 24px;
-            margin-right: 10px;
-            color: var(--accent);
+        
+        .logo span {
+            color: var(--secondary-color);
         }
-
-        .logo h1 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
+        
         nav ul {
             display: flex;
             list-style: none;
         }
-
-        nav a {
-            color: var(--text-on-dark);
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
             text-decoration: none;
-            margin: 0 15px;
-            font-weight: 600;
-            position: relative;
-            padding: 5px 0;
-            transition: var(--transition);
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
         }
-
-        nav a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            bottom: 0;
-            left: 0;
-            transition: var(--transition);
+        
+        nav ul li a:hover {
+            color: var(--primary-color);
         }
-
-        nav a:hover:after {
-            width: 100%;
-        }
-
-        .mobile-menu {
+        
+        .user-info {
             display: none;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        /* Hero section */
-        .hero {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/api/placeholder/1200/600') no-repeat center center/cover;
-            color: var(--text-on-dark);
-            padding: 120px 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            font-weight: 800;
-            animation: fadeInUp 1s ease;
-        }
-
-        .hero p {
-            font-size: 20px;
-            margin-bottom: 30px;
-            animation: fadeInUp 1s ease 0.2s both;
-        }
-
-        .btn {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--primary-dark);
-            padding: 12px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: fadeInUp 1s ease 0.4s both;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            margin-left: 15px;
-        }
-
-        .btn-outline:hover {
-            background: var(--accent);
-            color: var(--primary-dark);
-        }
-
-        /* Sections */
-        section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-title h2 {
-            font-size: 32px;
-            position: relative;
-            padding-bottom: 15px;
-            display: inline-block;
-        }
-
-        .section-title h2:after {
-            content: '';
-            position: absolute;
-            width: 70px;
-            height: 3px;
-            background: var(--primary);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* About section */
-        .about-content {
-            display: flex;
             align-items: center;
-            gap: 40px;
         }
-
-        .about-image {
-            flex: 1;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .about-text {
-            flex: 1;
-        }
-
-        .about-text p {
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-        }
-
-        /* Features section */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            padding: 30px;
-            transition: var(--transition);
-            text-align: center;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .feature-icon {
-            font-size: 40px;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-        }
-
-        /* How it works */
-        .steps {
-            display: flex;
-            justify-content: space-between;
-            counter-reset: step;
-            flex-wrap: wrap;
-        }
-
-        .step {
-            flex: 1;
-            min-width: 200px;
-            margin: 15px;
-            position: relative;
-            text-align: center;
-            padding: 30px 20px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .step::before {
-            counter-increment: step;
-            content: counter(step);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            color: var(--text-on-dark);
-            border-radius: 50%;
-            font-size: 22px;
-            font-weight: 700;
-            margin: 0 auto 20px;
-        }
-
-        .step:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            top: 65px;
-            right: -50%;
-            width: 100%;
-            height: 2px;
-            background: var(--primary-light);
-            z-index: -1;
-        }
-
-        /* Testimonials */
-        .testimonials-slider {
-            max-width: 800px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .testimonial {
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            padding: 30px;
-            text-align: center;
-        }
-
-        .testimonial-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 20px;
-            border: 3px solid var(--primary);
-        }
-
-        .testimonial-text {
-            font-style: italic;
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-        }
-
-        .testimonial-author {
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* Contact form */
-        .contact-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-        }
-
-        .contact-info {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .contact-info h3 {
-            margin-bottom: 20px;
-        }
-
-        .contact-info p {
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-        }
-
-        .contact-info-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .contact-info-item i {
-            font-size: 20px;
-            color: var(--primary);
+        
+        .user-info .points {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
             margin-right: 15px;
-            width: 30px;
+            font-weight: bold;
         }
-
-        .contact-form {
-            flex: 1;
-            min-width: 300px;
-            background: var(--card-bg);
+        
+        .user-info .user-email {
+            margin-right: 15px;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3367d6;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2d9249;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #d62516;
+        }
+        
+        .auth-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
+            max-width: 400px;
+            margin: 50px auto;
         }
-
+        
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            font-weight: 600;
+            font-weight: 500;
         }
-
-        .form-control {
+        
+        .form-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            transition: var(--transition);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
         }
-
-        .form-control:focus {
+        
+        .form-group input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2);
+            border-color: var(--primary-color);
         }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: var(--text-on-dark);
-            padding: 60px 0 20px;
-        }
-
-        .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .footer-column h3 {
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-column h3:after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 3px;
-            background: var(--accent);
-            bottom: 0;
-            left: 0;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: var(--text-on-dark);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-            padding-left: 5px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
+        
+        .auth-switch {
+            text-align: center;
             margin-top: 20px;
         }
-
-        .social-links a {
+        
+        .auth-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .dashboard-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            color: var(--text-on-dark);
-            transition: var(--transition);
+            margin-bottom: 30px;
         }
-
-        .social-links a:hover {
-            background: var(--accent);
-            color: var(--primary-dark);
-            transform: translateY(-3px);
+        
+        .dashboard-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
         }
-
-        .copyright {
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .ad-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
             text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        .ad-container h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
         }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s ease, transform 1s ease;
+        
+        .ad-placeholder {
+            background-color: #f1f3f4;
+            padding: 50px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            min-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #5f6368;
+            position: relative;
         }
-
-        .fade-in.active {
-            opacity: 1;
-            transform: translateY(0);
+        
+        .ad-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
-
-        /* Responsive styles */
-        @media (max-width: 900px) {
-            .about-content {
-                flex-direction: column;
-            }
-            
-            .step:not(:last-child)::after {
-                display: none;
-            }
+        
+        .ad-timer {
+            background-color: #f1f3f4;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 18px;
         }
-
+        
+        .history-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .history-container h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .history-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-list th, .history-list td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .history-list th {
+            background-color: #f1f3f4;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            color: var(--accent-color);
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .success-message {
+            color: var(--secondary-color);
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        #reward-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        
+        #reward-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        #reward-popup h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        #reward-popup p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        #reward-popup .points-earned {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
-            nav ul {
-                display: none;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: var(--primary-dark);
+            .dashboard-stats {
                 flex-direction: column;
-                padding: 20px 0;
             }
             
-            nav ul.active {
-                display: flex;
+            .ad-controls {
+                flex-direction: column;
             }
             
-            nav ul li {
-                margin: 10px 0;
-            }
-            
-            .mobile-menu {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .btn {
-                display: block;
-                width: 80%;
-                margin: 10px auto;
+            .history-list {
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-crown"></i>
-                <h1>King of Rewards</h1>
-            </div>
+    <div class="container">
+        <header>
+            <div class="logo">Ad<span>Rewards</span></div>
             <nav>
-                <div class="mobile-menu" id="mobileMenu">
-                    <i class="fas fa-bars"></i>
-                </div>
-                <ul id="navMenu">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#how-it-works">How It Works</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                <ul>
+                    <li><a href="#" class="nav-link" data-target="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-target="how-it-works">How It Works</a></li>
                 </ul>
             </nav>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>Earn Rewards Instantly</h1>
-            <p>Watch ads, complete tasks, and redeem coins for real money with the King of Rewards app</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn">Download Now</a>
-                <a href="#how-it-works" class="btn btn-outline">Learn More</a>
+            <div class="auth-buttons">
+                <button class="btn" id="login-btn">Login</button>
+                <button class="btn btn-secondary" id="register-btn">Register</button>
+            </div>
+            <div class="user-info">
+                <div class="points">0 Points</div>
+                <div class="user-email">user@example.com</div>
+                <button class="btn btn-accent" id="logout-btn">Logout</button>
+            </div>
+        </header>
+        
+        <div id="home-page">
+            <div class="hero">
+                <h1>Watch Ads. Earn Points. It's That Simple.</h1>
+                <p>Join thousands of users who earn rewards by watching advertisements.</p>
+                <button class="btn btn-secondary" id="get-started-btn">Get Started</button>
             </div>
         </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about">
-        <div class="container">
-            <div class="section-title">
-                <h2>About King of Rewards</h2>
-            </div>
-            <div class="about-content">
-                <div class="about-image fade-in">
-                    <img src="/api/placeholder/600/400" alt="King of Rewards App Screenshot">
-                </div>
-                <div class="about-text fade-in">
-                    <p>King of Rewards is a premium earning app that puts real money in your pocket. Our platform allows users to collect coins by watching ads, installing apps, completing surveys, and more.</p>
-                    <p>What sets us apart is our instant redemption system - convert your coins to real cash via eSewa, PayPal, gift cards, or mobile recharges with just a few taps.</p>
-                    <p>Join thousands of satisfied users who earn extra income every day with King of Rewards!</p>
-                    <a href="#" class="btn">Join Now</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" style="background-color: #f1f1f1;">
-        <div class="container">
-            <div class="section-title">
-                <h2>Amazing Features</h2>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <h3>Watch & Earn</h3>
-                    <p>Earn coins by watching rewarded videos and banner ads. Quick, easy, and rewarding!</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <h3>Complete Tasks</h3>
-                    <p>Install apps, fill surveys, and complete offers to maximize your earning potential.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <h3>Instant Redemption</h3>
-                    <p>Convert your coins to real cash via eSewa, PayPal, or gift cards with no waiting time.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Mobile Recharges</h3>
-                    <p>Top up your mobile balance directly using your earned coins from any network.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <h3>Daily Bonuses</h3>
-                    <p>Claim daily login bonuses and special rewards to boost your earnings.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Refer & Earn</h3>
-                    <p>Invite friends and family to earn additional coins with our referral program.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section id="how-it-works">
-        <div class="container">
-            <div class="section-title">
-                <h2>How It Works</h2>
-            </div>
+        
+        <div id="how-it-works-page" style="display: none;">
+            <h2>How AdRewards Works</h2>
             <div class="steps">
-                <div class="step fade-in">
-                    <h3>Download</h3>
-                    <p>Get the King of Rewards app from Google Play Store or App Store</p>
+                <div class="step">
+                    <h3>1. Create an Account</h3>
+                    <p>Sign up with your email and password to get started.</p>
                 </div>
-                <div class="step fade-in">
-                    <h3>Register</h3>
-                    <p>Create your account with email or social media login</p>
+                <div class="step">
+                    <h3>2. Watch Advertisements</h3>
+                    <p>Watch curated ads and earn points for each completed view.</p>
                 </div>
-                <div class="step fade-in">
-                    <h3>Complete Tasks</h3>
-                    <p>Watch ads, install apps, and complete surveys to earn coins</p>
+                <div class="step">
+                    <h3>3. Accumulate Points</h3>
+                    <p>Your points are saved to your account and never expire.</p>
                 </div>
-                <div class="step fade-in">
-                    <h3>Redeem</h3>
-                    <p>Convert your coins to real money through multiple payment options</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" style="background-color: #f1f1f1;">
-        <div class="container">
-            <div class="section-title">
-                <h2>User Testimonials</h2>
-            </div>
-            <div class="testimonials-slider">
-                <div class="testimonial fade-in">
-                    <img src="/api/placeholder/80/80" alt="User" class="testimonial-image">
-                    <p class="testimonial-text">"I've been using King of Rewards for 3 months and have already made over $200. The instant payouts make it my favorite earning app!"</p>
-                    <p class="testimonial-author">- Sarah Johnson</p>
+                <div class="step">
+                    <h3>4. Redeem Rewards</h3>
+                    <p>Use your points to redeem various rewards and gift cards.</p>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="container">
-            <div class="section-title">
-                <h2>Contact Us</h2>
+        
+        <div id="login-page" class="auth-container" style="display: none;">
+            <h2>Login to Your Account</h2>
+            <div id="login-error" class="error-message"></div>
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="Enter your email">
             </div>
-            <div class="contact-container">
-                <div class="contact-info fade-in">
-                    <h3>Get In Touch</h3>
-                    <p>Have questions or feedback? Our team is here to help you with any inquiries about the King of Rewards app.</p>
-                    <div class="contact-info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>123 Reward Street, Digital City</span>
-                    </div>
-                    <div class="contact-info-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>support@kingofrewards.com</span>
-                    </div>
-                    <div class="contact-info-item">
-                        <i class="fas fa-phone"></i>
-                        <span>+1 (234) 567-8900</span>
-                    </div>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <form class="contact-form fade-in" onsubmit="alert('Thank you! Your message has been sent.'); return false;">
-                    <div class="form-group">
-                        <label for="name">Your Name</label>
-                        <input type="text" id="name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Your Email</label>
-                        <input type="email" id="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <input type="text" id="subject" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Your Message</label>
-                        <textarea id="message" class="form-control" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn">Send Message</button>
-                </form>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
+            </div>
+            <button class="btn" id="submit-login">Login</button>
+            <div class="auth-switch">
+                <p>Don't have an account? <a id="switch-to-register">Register</a></p>
+材料
             </div>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>King of Rewards</h3>
-                    <p>The premier platform for earning real money through simple tasks and activities.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#testimonials">Testimonials</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Support</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Payment Options</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Newsletter</h3>
-                    <p>Subscribe to our newsletter for the latest updates and offers.</p>
-                    <form>
-                        <input type="email" placeholder="Your Email" class="form-control" style="margin-bottom: 10px;">
-                        <button type="submit" class="btn" style="width: 100%;">Subscribe</button>
-                    </form>
-                </div>
+        
+        <div id="register-page" class="auth-container" style="display: none;">
+            <h2>Create a New Account</h2>
+            <div id="register-error" class="error-message"></div>
+            <div id="register-success" class="success-message"></div>
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" placeholder="Enter your email">
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 King of Rewards. All rights reserved.</p>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label for="register-confirm-password">Confirm Password</label>
+                <input type="password" id="register-confirm-password" placeholder="Confirm your password">
+            </div>
+            <button class="btn" id="submit-register">Register</button>
+            <div class="auth-switch">
+                <p>Already have an account? <a id="switch-to-login">Login</a></p>
             </div>
         </div>
-    </footer>
-
+        
+        <div id="dashboard" class="dashboard">
+            <div class="dashboard-header">
+                <h2>Your Dashboard</h2>
+                <div class="actions">
+                    <button class="btn" id="refresh-dashboard">Refresh</button>
+                </div>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Total Points</h3>
+                    <div class="value" id="total-points">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Ads Watched</h3>
+                    <div class="value" id="ads-watched">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Points Today</h3>
+                    <div class="value" id="points-today">0</div>
+                </div>
+            </div>
+            
+            <div class="ad-container">
+                <h3>Watch Ads & Earn Points</h3>
+                <div class="ad-placeholder" id="ad-placeholder">
+                    <p>Click Start to begin watching ads</p>
+                </div>
+                <div class="ad-controls">
+                    <div class="ad-timer" id="ad-timer">00:00</div>
+                    <button class="btn" id="start-ad-btn">Start Watching</button>
+                    <button class="btn btn-secondary" id="next-ad-btn" disabled>Next Ad</button>
+                </div>
+            </div>
+            
+            <div class="history-container">
+                <h3>Activity History</h3>
+                <table class="history-list">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Activity</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <tr>
+                            <td colspan="3">No activity yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div id="reward-popup">
+        <h3>Congratulations!</h3>
+        <p>You've earned points for watching the ad!</p>
+        <div class="points-earned">+<span id="points-value">10</span> points</div>
+        <button class="btn" id="claim-btn">Claim Points</button>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
     <script>
-        // Mobile menu toggle
-        document.getElementById('mobileMenu').addEventListener('click', function() {
-            document.getElementById('navMenu').classList.toggle('active');
-        });
-
-        // Scroll animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const fadeElements = document.querySelectorAll('.fade-in');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, {
-                threshold: 0.1
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD14wwgcUIyiPl_qXvx7CtQTO2DEy465II",
+  authDomain: "my-video-earn-app12.firebaseapp.com",
+  databaseURL: "https://my-video-earn-app12-default-rtdb.firebaseio.com",
+  projectId: "my-video-earn-app12",
+  storageBucket: "my-video-earn-app12.firebasestorage.app",
+  messagingSenderId: "967539655660",
+  appId: "1:967539655660:web:95e773e701d35a252936c9",
+  measurementId: "G-DPWBZT3RN5"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Get references to Firebase services
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // Current user
+        let currentUser = null;
+        
+        // DOM elements
+        const homePageEl = document.getElementById('home-page');
+        const howItWorksPageEl = document.getElementById('how-it-works-page');
+        const loginPageEl = document.getElementById('login-page');
+        const registerPageEl = document.getElementById('register-page');
+        const dashboardEl = document.getElementById('dashboard');
+        const authButtonsEl = document.querySelector('.auth-buttons');
+        const userInfoEl = document.querySelector('.user-info');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const getStartedBtn = document.getElementById('get-started-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const switchToRegisterBtn = document.getElementById('switch-to-register');
+        const switchToLoginBtn = document.getElementById('switch-to-login');
+        const submitLoginBtn = document.getElementById('submit-login');
+        const submitRegisterBtn = document.getElementById('submit-register');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const registerEmail = document.getElementById('register-email');
+        const registerPassword = document.getElementById('register-password');
+        const registerConfirmPassword = document.getElementById('register-confirm-password');
+        const loginError = document.getElementById('login-error');
+        const registerError = document.getElementById('register-error');
+        const registerSuccess = document.getElementById('register-success');
+        const totalPointsEl = document.getElementById('total-points');
+        const adsWatchedEl = document.getElementById('ads-watched');
+        const pointsTodayEl = document.getElementById('points-today');
+        const startAdBtn = document.getElementById('start-ad-btn');
+        const nextAdBtn = document.getElementById('next-ad-btn');
+        const adTimerEl = document.getElementById('ad-timer');
+        const adPlaceholderEl = document.getElementById('ad-placeholder');
+        const historyTableBody = document.getElementById('history-table-body');
+        const rewardPopup = document.getElementById('reward-popup');
+        const overlay = document.getElementById('overlay');
+        const pointsValueEl = document.getElementById('points-value');
+        const claimBtn = document.getElementById('claim-btn');
+        const refreshDashboardBtn = document.getElementById('refresh-dashboard');
+        
+        // Ad system variables
+        let adTimer;
+        let timeLeft = 0;
+        let isWatching = false;
+        let currentAdIndex = 0;
+        
+        // Sample ads with PropellerAds integration
+        const ads = [
+            { 
+                id: 'ad1', 
+                type: 'interstitial',
+                duration: 15, 
+                points: 5 
+            },
+            { 
+                id: 'ad2', 
+                type: 'interstitial',
+                duration: 30, 
+                points: 10 
+            },
+            { 
+                id: 'ad3', 
+                type: 'interstitial',
+                duration: 45, 
+                points: 15 
+            }
+        ];
+        
+        // Function to trigger PropellerAds interstitial ad
+        function triggerPropellerAd() {
+            const script = document.createElement('script');
+            script.src = 'https://groleegni.net/401/9304119';
+            try {
+                (document.body || document.documentElement).appendChild(script);
+                adPlaceholderEl.innerHTML = '<p>Interstitial ad loading...</p>';
+            } catch (e) {
+                console.error('PropellerAds error:', e);
+                adPlaceholderEl.innerHTML = '<p>Error loading ad. Please try again.</p>';
+                isWatching = false;
+                startAdBtn.disabled = false;
+                clearInterval(adTimer);
+            }
+        }
+        
+        // Initialize the app
+        function init() {
+            // Set up event listeners
+            loginBtn.addEventListener('click', () => showPage('login'));
+            registerBtn.addEventListener('click', () => showPage('register'));
+            getStartedBtn.addEventListener('click', () => {
+                if (currentUser) {
+                    showPage('dashboard');
+                } else {
+                    showPage('register');
+                }
             });
+            logoutBtn.addEventListener('click', logout);
+            switchToRegisterBtn.addEventListener('click', () => showPage('register'));
+            switchToLoginBtn.addEventListener('click', () => showPage('login'));
+            submitLoginBtn.addEventListener('click', handleLogin);
+            submitRegisterBtn.addEventListener('click', handleRegister);
+            startAdBtn.addEventListener('click', startWatchingAd);
+            nextAdBtn.addEventListener('click', loadNextAd);
+            claimBtn.addEventListener('click', closeRewardPopup);
+            refreshDashboardBtn.addEventListener('click', refreshDashboard);
             
-            fadeElements.forEach(element => {
-                observer.observe(element);
-            });
-            
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 70,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
-                        document.getElementById('navMenu').classList.remove('active');
-                    }
+                    const target = link.getAttribute('data-target');
+                    showPage(target);
                 });
             });
-        });
+            
+            // Set up Firebase auth state observer
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    updateUserInterface();
+                    if (dashboardEl.style.display === 'block') {
+                        refreshDashboard();
+                    }
+                } else {
+                    currentUser = null;
+                    updateUserInterface();
+                    if (dashboardEl.style.display === 'block') {
+                        showPage('home');
+                    }
+                }
+            });
+            
+            // Show home page initially
+            showPage('home');
+        }
+        
+        // Show specific page and hide others
+        function showPage(pageName) {
+            homePageEl.style.display = 'none';
+            howItWorksPageEl.style.display = 'none';
+            loginPageEl.style.display = 'none';
+            registerPageEl.style.display = 'none';
+            dashboardEl.style.display = 'none';
+            
+            switch (pageName) {
+                case 'home':
+                    homePageEl.style.display = 'block';
+                    break;
+                case 'how-it-works':
+                    howItWorksPageEl.style.display = 'block';
+                    break;
+                case 'login':
+                    loginPageEl.style.display = 'block';
+                    loginError.textContent = '';
+                    break;
+                case 'register':
+                    registerPageEl.style.display = 'block';
+                    registerError.textContent = '';
+                    registerSuccess.textContent = '';
+                    break;
+                case 'dashboard':
+                    if (currentUser) {
+                        dashboardEl.style.display = 'block';
+                        refreshDashboard();
+                    } else {
+                        showPage('login');
+                    }
+                    break;
+            }
+        }
+        
+        // Handle user registration
+        function handleRegister() {
+            const email = registerEmail.value.trim();
+            const password = registerPassword.value;
+            const confirmPassword = registerConfirmPassword.value;
+            
+            registerError.textContent = '';
+            registerSuccess.textContent = '';
+            
+            if (!email || !password || !confirmPassword) {
+                registerError.textContent = 'All fields are required';
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                registerError.textContent = 'Please enter a valid email';
+                return;
+            }
+            
+            if (password.length < 6) {
+                registerError.textContent = 'Password must be at least 6 characters';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                registerError.textContent = 'Passwords do not match';
+                return;
+            }
+            
+            submitRegisterBtn.disabled = true;
+            submitRegisterBtn.textContent = 'Registering...';
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const uid = userCredential.user.uid;
+                    return database.ref('users/' + uid).set({
+                        email: email,
+                        points: 0,
+                        adsWatched: 0,
+                        history: [],
+                        createdAt: new Date().toISOString()
+                    });
+                })
+                .then(() => {
+                    registerSuccess.textContent = 'Registration successful! You can now log in.';
+                    registerEmail.value = '';
+                    registerPassword.value = '';
+                    registerConfirmPassword.value = '';
+                    return auth.signOut();
+                })
+                .then(() => {
+                    setTimeout(() => {
+                        showPage('login');
+                    }, 2000);
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/email-already-in-use') {
+                        registerError.textContent = 'A user with this email already exists';
+                    } else {
+                        registerError.textContent = error.message;
+                    }
+                })
+                .finally(() => {
+                    submitRegisterBtn.disabled = false;
+                    submitRegisterBtn.textContent = 'Register';
+                });
+        }
+        
+        // Handle user login
+        function handleLogin() {
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value;
+            
+            loginError.textContent = '';
+            
+            if (!email || !password) {
+                loginError.textContent = 'Email and password are required';
+                return;
+            }
+            
+            submitLoginBtn.disabled = true;
+            submitLoginBtn.textContent = 'Logging in...';
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    loginEmail.value = '';
+                    loginPassword.value = '';
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        loginError.textContent = 'Invalid email or password';
+                    } else {
+                        loginError.textContent = error.message;
+                    }
+                })
+                .finally(() => {
+                    submitLoginBtn.disabled = false;
+                    submitLoginBtn.textContent = 'Login';
+                });
+        }
+        
+        // Handle user logout
+        function logout() {
+            if (isWatching) {
+                clearInterval(adTimer);
+                isWatching = false;
+            }
+            
+            auth.signOut()
+                .then(() => {
+                    showPage('home');
+                })
+                .catch((error) => {
+                    console.error('Error signing out:', error);
+                });
+        }
+        
+        // Update user interface based on login status
+        function updateUserInterface() {
+            if (currentUser) {
+                authButtonsEl.style.display = 'none';
+                userInfoEl.style.display = 'flex';
+                document.querySelector('.user-email').textContent = currentUser.email;
+                
+                database.ref('users/' + currentUser.uid).child('points').get()
+                    .then((snapshot) => {
+                        const points = snapshot.exists() ? snapshot.val() : 0;
+                        document.querySelector('.points').textContent = `${points} Points`;
+                    });
+            } else {
+                authButtonsEl.style.display = 'flex';
+                userInfoEl.style.display = 'none';
+            }
+        }
+        
+        // Refresh dashboard data
+        function refreshDashboard() {
+            if (!currentUser) return;
+            
+            database.ref('users/' + currentUser.uid).get()
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        document.querySelector('.points').textContent = `${userData.points || 0} Points`;
+                        document.querySelector('.user-email').textContent = userData.email;
+                        totalPointsEl.textContent = userData.points || 0;
+                        adsWatchedEl.textContent = userData.adsWatched || 0;
+                        
+                        const today = new Date().toDateString();
+                        const history = userData.history || [];
+                        const historyArray = Array.isArray(history) ? history : Object.values(history);
+                        
+                        const pointsToday = historyArray
+                            .filter(item => new Date(item.date).toDateString() === today)
+                            .reduce((sum, item) => sum + item.points, 0);
+                            
+                        pointsTodayEl.textContent = pointsToday;
+                        
+                        if (!historyArray.length) {
+                            historyTableBody.innerHTML = '<tr><td colspan="3">No activity yet</td></tr>';
+                        } else {
+                            historyTableBody.innerHTML = '';
+                            const recentHistory = [...historyArray]
+                                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                .slice(0, 10);
+                            
+                            recentHistory.forEach(item => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${new Date(item.date).toLocaleString()}</td>
+                                    <td>${item.activity}</td>
+                                    <td>+${item.points}</td>
+                                `;
+                                historyTableBody.appendChild(row);
+                            });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting user data:", error);
+                });
+        }
+        
+        // Start watching an ad
+        function startWatchingAd() {
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+            
+            if (isWatching) return;
+            
+            isWatching = true;
+            startAdBtn.disabled = true;
+            
+            const ad = ads[currentAdIndex];
+            loadAd(ad);
+            
+            timeLeft = ad.duration;
+            updateTimerDisplay();
+            
+            adTimer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(adTimer);
+                    adCompleted();
+                }
+            }, 1000);
+        }
+        
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            adTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Load ad by type
+        function loadAd(ad) {
+            if (ad.type === 'interstitial') {
+                triggerPropellerAd();
+            }
+        }
+        
+        // Load next ad
+        function loadNextAd() {
+            nextAdBtn.disabled = true;
+            startAdBtn.disabled = false;
+            
+            currentAdIndex = (currentAdIndex + 1) % ads.length;
+            
+            adPlaceholderEl.innerHTML = '<p>Click Start to begin watching ads</p>';
+            adTimerEl.textContent = '00:00';
+            
+            isWatching = false;
+        }
+        
+        // Ad completed
+        function adCompleted() {
+            nextAdBtn.disabled = false;
+            const ad = ads[currentAdIndex];
+            
+            pointsValueEl.textContent = ad.points;
+            rewardPopup.classList.add('show');
+            overlay.classList.add('show');
+            
+            if (currentUser) {
+                const userRef = database.ref('users/' + currentUser.uid);
+                
+                userRef.get().then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const updatedPoints = (userData.points || 0) + ad.points;
+                        const updatedAdsWatched = (userData.adsWatched || 0) + 1;
+                        
+                        const historyEntry = {
+                            date: new Date().toISOString(),
+                            activity: `Watched Ad #${ad.id}`,
+                            points: ad.points
+                        };
+                        
+                        let history = userData.history || [];
+                        if (!Array.isArray(history)) {
+                            history = Object.values(history);
+                        }
+                        
+                        const updates = {
+                            points: updatedPoints,
+                            adsWatched: updatedAdsWatched,
+                            [`history/${history.length}`]: historyEntry
+                        };
+                        
+                        userRef.update(updates)
+                            .then(() => {
+                                document.querySelector('.points').textContent = `${updatedPoints} Points`;
+                            })
+                            .catch((error) => {
+                                console.error("Error updating points:", error);
+                            });
+                    }
+                }).catch((error) => {
+                    console.error("Error getting user data:", error);
+                });
+            }
+        }
+        
+        // Close reward popup
+        function closeRewardPopup() {
+            rewardPopup.classList.remove('show');
+            overlay.classList.remove('show');
+            refreshDashboard();
+        }
+        
+        // Validate email format
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
